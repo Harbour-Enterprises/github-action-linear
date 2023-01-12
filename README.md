@@ -31,7 +31,7 @@ Github Action that updates a Linear issue
 ## Example usage
 
 ```
-uses: Harbour-Enterprises/github-action-linear@v1.0.1
+uses: Harbour-Enterprises/github-action-linear@v1
 with:
   branch: "${{ github.head_ref }}"
   comment: "`Livetest link:` [Click here](http://livetest.link)"
