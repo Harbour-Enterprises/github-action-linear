@@ -1,8 +1,5 @@
 # Use the Python base image
-FROM --platform=linux/amd64 python:3.10-alpine
-
-# Set a working directory
-WORKDIR /app
+FROM python:3.10-alpine
 
 # Copy all requirements
 COPY requirements* .
@@ -14,4 +11,4 @@ RUN pip3 install --no-cache-dir -r requirements.txt
 COPY . .
 
 # Run the function
-ENTRYPOINT [ "python", "/main.py" ]
+ENTRYPOINT [ "python", "main.py" ]
