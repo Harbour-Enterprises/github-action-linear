@@ -33,7 +33,7 @@ Github Action that updates a Linear issue
 ```
 uses: Harbour-Enterprises/github-action-linear@v1
 with:
+  token: "${{ secrets.LINEAR_TOKEN }}"
   branch: "${{ github.head_ref }}"
   comment: "`Livetest link:` [Click here](http://livetest.link)"
-  token: "${{ secrets.LINEAR_TOKEN }}"
 ```

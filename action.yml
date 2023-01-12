@@ -20,9 +20,9 @@ runs:
   using: 'docker'
   image: 'Dockerfile'
   args:
+    - ${{ inputs.token }}
     - ${{ inputs.branch }}
     - ${{ inputs.title }}
     - ${{ inputs.description }}
     - ${{ inputs.comment }}
     - ${{ inputs.label }}
-    - ${{ inputs.token }}
