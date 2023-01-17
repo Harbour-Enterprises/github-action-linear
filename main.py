@@ -48,6 +48,30 @@ def get_issue(team_key, issue_number):
         return matched_issues[0]
 
 
+def get_state(state_name):
+    query = """
+    query WorkflowState($stateName: String!) { 
+        workflowStates(filter: {name: {eq: $stateName}}) {
+            nodes {
+                id,
+                description
+            }
+        }
+    }
+    """
+    variables = {"stateName": state_name}
+    payload = {"query": query, "variables": variables}
+
+    response = requests.post(url, headers=headers, json=payload)
+    response.raise_for_status()
+    matched_states = response.json()["data"]["workflowStates"]["nodes"]
+
+    if len(matched_states) == 0:
+        return None
+    else:
+        return matched_states[0]
+
+
 def get_label_id(team_id, label_name):
     query = """
     query LabelsByTeam ($teamId: ID) {
@@ -97,6 +121,35 @@ def add_labels(issue_id, label_ids):
     return None
 
 
+def create_label(team_id, label_name):
+    query = """
+    mutation IssueLabelCreate ($teamId: String, $labelName: String!)  {
+        issueLabelCreate(
+            input: {
+                name: $labelName,
+                teamId: $teamId
+            }
+        ) {
+            success
+            issueLabel {
+                id
+            }
+        }
+    }
+    """
+    variables = {"teamId": team_id, "labelName": label_name}
+    payload = {"query": query, "variables": variables}
+
+    response = requests.post(url, headers=headers, json=payload)
+    response.raise_for_status()
+    label = response.json()["data"]["issueLabelCreate"].get("issueLabel")
+
+    if not label:
+        return None
+    else:
+        return label.get("id")
+
+
 def add_comment(issue_id, comment):
     query = """
     mutation CommentCreateInput ($issueId: String!, $body: String!)  {
@@ -121,7 +174,31 @@ def add_comment(issue_id, comment):
     return None
 
 
-def update_linear(branch, title, description, comment, label):
+def update_issue_state(issue_id, state_id):
+    query = """
+    mutation IssueUpdate ($issueId: String!, $stateId: String!)  {
+        issueUpdate(
+            id: $issueId,
+            input: {
+                stateId: $stateId
+            }
+        ) {
+            success
+            issue {
+                id
+            }
+        }
+    }
+    """
+    variables = {"stateId": state_id, "issueId": issue_id}
+    payload = {"query": query, "variables": variables}
+
+    response = requests.post(url, headers=headers, json=payload)
+    response.raise_for_status()
+    return None
+
+
+def update_linear(object_type, object_value, label, branch=None, title=None, description=None):
 
     ## Linear supports three ways to link issues with your pull requests:
     # Include *issue ID* in the branch name
@@ -156,20 +233,33 @@ def update_linear(branch, title, description, comment, label):
     team_id = issue.get("team").get("id")
     label_ids = list(set([label.get("id") for label in issue.get("labels").get("nodes")]))
 
-    # Add comment
-    add_comment(issue_id, comment)
+    if object_type == "comment":
 
-    # Add label (if present)
+        # Add comment
+        add_comment(issue_id, object_value)
+
+    elif object_type == "state":
+
+        # Get state id
+        state = get_state(object_value)
+        state_id = state.get("id")
+
+        # Update issue state
+        update_issue_state(issue_id, state_id)
+
     if label:
 
         # Get label id
         label_id = get_label_id(team_id, label)
         if not label_id:
-            print("No matching labels found!", flush=True)
-            sys.exit()
+
+            # Create label
+            label_id = create_label(team_id, label)
+
+        # Append to existing ones
         label_ids.append(label_id)
 
-        # Add label
+        # Add label to issue
         add_labels(issue_id, label_ids)
 
 
