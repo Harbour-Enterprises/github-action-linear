@@ -198,28 +198,18 @@ def update_issue_state(issue_id, state_id):
     return None
 
 
-def update_linear(object_type, object_value, label, branch=None, title=None, description=None):
+def update_linear(object_type, object_value, search_value, label):
 
     ## Linear supports three ways to link issues with your pull requests:
     # Include *issue ID* in the branch name
     # Include *issue ID* in the PR title
     # Include *issue ID* with a magic word in the PR description (e.g. Fixes ENG-123) similar to GitHub Issues
 
-    # Find issue through branch name
-    match = re.search("(?i)(\w+)-(\d+)", branch)
+    # Match search value against regex
+    match = re.search("(?i)(\w+)-(\d+)", search_value)
     if not match:
-        print("Unable to infer issue code from branch name", flush=True)
-
-        # Find issue through branch name
-        match = re.search("(?i)(\w+)-(\d+)", title)
-        if not match:
-            print("Unable to infer issue code from PR title", flush=True)
-
-            # Find issue through pr description
-            match = re.search("(?i)(\w+)-(\d+)", description)
-            if not match:
-                print("Unable to infer issue code from PR description", flush=True)
-                sys.exit()
+        print("Unable to infer issue code from search value", flush=True)
+        sys.exit()
 
     # Extract team key and issue number
     team_key = match.group(1).upper()
