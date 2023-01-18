@@ -10,7 +10,7 @@ inputs:
   object_value:
     description: 'Linear object value'
     required: true
-  saerch_value:
+  search_value:
     description: 'Search value associate with Linear Issue (e.g. Branch name / PR title / PR description)'
     required: true    
   label:
