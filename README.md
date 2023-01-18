@@ -8,21 +8,17 @@ Github Action that updates a Linear issue
 
 **Required** Access token for Linear API.
 
-## `branch`
+## `object_type`
 
 **Required** Name of the branch containing Linear ref number. This is used to find assotiated Linear ticket.
 
-## `title`
+## `object_value`
 
-*Optional* Title of the PR containing Linear ref number. This is used to find assotiated Linear ticket.
+**Required** Title of the PR containing Linear ref number. This is used to find assotiated Linear ticket.
 
-## `description`
+## `search_value`
 
 *Optional* Description of the PR containing Linear ref number. This is used to find assotiated Linear ticket.
-
-## `comment`
-
-**Required** Comment text body (markdown accepted) to be added in the Linear issue.
 
 ## `label`
 
@@ -31,9 +27,11 @@ Github Action that updates a Linear issue
 ## Example usage
 
 ```
-uses: Harbour-Enterprises/github-action-linear@v1
+uses: Harbour-Enterprises/github-action-linear@v1.0.2
 with:
   token: "${{ secrets.LINEAR_TOKEN }}"
-  branch: "${{ github.head_ref }}"
-  comment: "`Livetest link:` [Click here](http://livetest.link)"
+  object_type: "comment"
+  object_value: "This is a comment"
+  search_value: "${{ github.head_ref }}"
+  label: "Label name"
 ```
