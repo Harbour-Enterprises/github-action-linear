@@ -1,24 +1,24 @@
-name: 'Update Linear issue'
-description: 'Action updates a Linear issue'
+name: "Update Linear issue"
+description: "Action updates a Linear issue"
 inputs:
   token:
-    description: 'Access token for Linear API'
+    description: "Access token for Linear API"
     required: true
   object_type:
-    description: 'Linear object type to be updated (e.g. comment/state)'
+    description: "Linear object type to be updated (e.g. comment/state)"
     required: true
   object_value:
-    description: 'Linear object value'
+    description: "Linear object value"
     required: true
   search_value:
-    description: 'Search value associate with Linear Issue (e.g. Branch name / PR title / PR description)'
-    required: true    
+    description: "Search value associate with Linear Issue (e.g. Branch name / PR title / PR description)"
+    required: true
   label:
-    description: 'Label to add' 
+    description: "Label to add"
 
 runs:
-  using: 'docker'
-  image: 'Dockerfile'
+  using: "docker"
+  image: "Dockerfile"
   args:
     - ${{ inputs.token }}
     - ${{ inputs.object_type }}

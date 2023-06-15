@@ -11,6 +11,8 @@ args = sys.argv[2:]
 
 url = "https://api.linear.app/graphql"
 headers = {"Authorization": LINEAR_TOKEN, "Content-Type": "application/json"}
+if LINEAR_TOKEN.split("_")[1] == "oauth":
+    headers = {"Authorization": f"Bearer {LINEAR_TOKEN}", "Content-Type": "application/json"}
 
 
 def get_issue(team_key, issue_number):
@@ -198,8 +200,7 @@ def update_issue_state(issue_id, state_id):
     return None
 
 
-def update_linear(object_type, object_value, search_value, label):
-
+def update_linear(object_type, object_value, search_value, label=None):
     ## Linear supports three ways to link issues with your pull requests:
     # Include *issue ID* in the branch name
     # Include *issue ID* in the PR title
@@ -224,12 +225,10 @@ def update_linear(object_type, object_value, search_value, label):
     label_ids = list(set([label.get("id") for label in issue.get("labels").get("nodes")]))
 
     if object_type == "comment":
-
         # Add comment
         add_comment(issue_id, object_value)
 
     elif object_type == "state":
-
         # Get state id
         state = get_state(object_value)
         state_id = state.get("id")
@@ -238,11 +237,9 @@ def update_linear(object_type, object_value, search_value, label):
         update_issue_state(issue_id, state_id)
 
     if label:
-
         # Get label id
         label_id = get_label_id(team_id, label)
         if not label_id:
-
             # Create label
             label_id = create_label(team_id, label)
 

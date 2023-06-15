@@ -6,7 +6,7 @@ Github Action that updates a Linear issue
 
 ## `token`
 
-**Required** Access token for Linear API.
+**Required** Access token for Linear API (it can be a personal API key or an OAuth2 access token)
 
 ## `object_type`
 
@@ -18,11 +18,11 @@ Github Action that updates a Linear issue
 
 ## `search_value`
 
-*Optional* Description of the PR containing Linear ref number. This is used to find assotiated Linear ticket.
+**Required** Description of the PR containing Linear ref number. This is used to find assotiated Linear ticket.
 
 ## `label`
 
-*Optional* Label name to be added in the Linear issue.
+_Optional_ Label name to be added in the Linear issue.
 
 ## Example usage
 
