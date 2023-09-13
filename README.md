@@ -27,7 +27,7 @@ _Optional_ Label name to be added in the Linear issue.
 ## Example usage
 
 ```
-uses: Harbour-Enterprises/github-action-linear@v1.0.2
+uses: Harbour-Enterprises/github-action-linear@v1.0.5
 with:
   token: "${{ secrets.LINEAR_TOKEN }}"
   object_type: "comment"
