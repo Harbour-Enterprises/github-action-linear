@@ -76,11 +76,17 @@ def get_state(state_name):
 
 def get_label_id(team_id, label_name):
     query = """
-    query LabelsByTeam ($teamId: ID) {
-        issueLabels(filter: {team: {id: {eq: $teamId}}}) {
-            nodes {
-                id,
-                name
+    query LabelsByTeam ($after: String, $teamId: ID) {
+        issueLabels(first: 250, after: $after, filter: {team: {id: {eq: $teamId}}}) {
+            edges {
+                node {
+                    id,
+                    name
+                }
+            }
+            pageInfo {
+                hasNextPage
+                endCursor
             }
         }
     }
@@ -90,7 +96,30 @@ def get_label_id(team_id, label_name):
 
     response = requests.post(url, headers=headers, json=payload)
     response.raise_for_status()
-    labels = response.json()["data"]["issueLabels"]["nodes"]
+    response_json = response.json()
+    if not response_json:
+        return None
+    issue_labels = response_json.get("data", {}).get("issueLabels", {})
+    page_info = issue_labels.get("pageInfo", {})
+    has_next_page = page_info.get("hasNextPage", False)
+    end_cursor = page_info.get("endCursor")
+    edges = issue_labels.get("edges", [])
+    if has_next_page:
+        while has_next_page:
+            variables["after"] = end_cursor
+            payload = {"query": query, "variables": variables}
+            response = requests.post(url, headers=headers, json=payload)
+            response.raise_for_status()
+            response_json = response.json()
+            if not response_json:
+                return None
+            issue_labels = response_json.get("data", {}).get("issueLabels", {})
+            page_info = issue_labels.get("pageInfo", {})
+            has_next_page = page_info.get("hasNextPage", False)
+            end_cursor = page_info.get("endCursor")
+            edges.extend(issue_labels.get("edges", []))
+
+    labels = [edge["node"] for edge in edges]
     matched_label = list(filter(lambda x: x["name"] == label_name, labels))
 
     if len(matched_label) == 0:
