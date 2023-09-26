@@ -1,27 +1,23 @@
-name: 'Update Linear issue'
-description: 'Action updates a Linear issue'
+name: "Linear GHA Client"
+description: "Exposes Linear GraphQL API to GitHub Actions"
 inputs:
   token:
-    description: 'Access token for Linear API'
+    description: "Access token for Linear API"
+    required: true
+  ref_value:
+    description: "Reference value to search for (e.g. branch name, PR title or PR description)"
     required: true
   object_type:
-    description: 'Linear object type to be updated (e.g. comment/state)'
+    description: "Object type (e.g. comment, state or label)"
     required: true
   object_value:
-    description: 'Linear object value'
+    description: "Object value"
     required: true
-  search_value:
-    description: 'Search value associate with Linear Issue (e.g. Branch name / PR title / PR description)'
-    required: true    
-  label:
-    description: 'Label to add' 
-
 runs:
-  using: 'docker'
-  image: 'Dockerfile'
+  using: "docker"
+  image: "Dockerfile"
   args:
     - ${{ inputs.token }}
+    - ${{ inputs.ref_value }}
     - ${{ inputs.object_type }}
     - ${{ inputs.object_value }}
-    - ${{ inputs.search_value }}
-    - ${{ inputs.label }}
