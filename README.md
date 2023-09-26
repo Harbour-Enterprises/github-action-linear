@@ -58,7 +58,7 @@ with:
 ### Change state of a Linear ticket
 
 ```
-uses: Harbour-Enterprises/github-action-linear@v1
+uses: Harbour-Enterprises/github-action-linear@v1.0.5
 with:
   token: "${{ secrets.LINEAR_TOKEN }}"
   ref_value: "${{ github.head_ref }}"

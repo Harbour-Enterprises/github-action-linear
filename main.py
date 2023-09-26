@@ -277,6 +277,7 @@ def update_issue_state(issue_id: str, state_id: str):
     return None
 
 
+
 def process_linear(ref_value: str, object_type: str, object_value: str):
     """Process Linear API action
 
