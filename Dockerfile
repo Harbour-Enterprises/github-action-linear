@@ -14,7 +14,7 @@ WORKDIR $APP_HOME
 COPY requirements* ./
 
 # Install any dependencies of the function
-RUN pip3 install --no-cache-dir -r requirements.txt -r requirements-dev.txt
+RUN pip3 install --no-cache-dir -r requirements.txt
 
 # Copy all the files from the local directory into the container
 COPY . ./

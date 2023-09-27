@@ -1,7 +1,5 @@
 import base64
 import mimetypes
-import multiprocessing
-import os
 import re
 import sys
 from io import BytesIO
@@ -353,24 +351,7 @@ def process_linear(ref_value: str, object_type: str, object_value: str):
         add_labels(issue_id, label_ids)
 
 
-def server_debugger(port: str):
-    """Start debugger server
-
-    :param port: Port to listen on
-    :type port: str
-    """
-    import debugpy
-
-    debugpy.listen(("0.0.0.0", int(port)))
-    print("⏳ Debugger can now be attached, Press -> Start Debugging in your IDE ⏳")
-    debugpy.wait_for_client()
-    print("🎉 Debugger attached, enjoy debugging 🎉")
-
-
 if __name__ == "__main__":
-    if os.environ.get("DEBUG") == "1":
-        print("Running in debug mode")
-        server_debugger(os.environ.get("DEBUG_PORT"))
     try:
         process_linear(*args)
     except requests.HTTPError as e:
