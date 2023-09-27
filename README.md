@@ -18,11 +18,11 @@ Exposes Linear GraphQL API to GitHub Actions
 
 ## `object_value`
 
-**Required** Linear object value. This will be added as the provided object type.
+**Required** Linear object value. Multiple values can be passed by separating them with `|` character.
 
 ## Example usage
 
-### Add comment to a Linear ticket
+### Add single comment to a Linear ticket
 
 ```
 uses: Harbour-Enterprises/github-action-linear@v1
@@ -33,7 +33,7 @@ with:
   object_value: "This is a comment"
 ```
 
-### Upload a file to a Linear ticket
+### Upload a single file to a Linear ticket
 
 ```
 uses: Harbour-Enterprises/github-action-linear@v1
@@ -42,6 +42,17 @@ with:
   ref_value: "${{ github.head_ref }}"
   object_type: "comment"
   object_value: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAFUlEQVR42mP8z8BQz0AEYBxVSF+FABJADveWkH6oAAAAAElFTkSuQmCC"
+```
+
+### Add multi type comment to a Linear ticket
+
+```
+uses: Harbour-Enterprises/github-action-linear@v1
+with:
+  token: "${{ secrets.LINEAR_TOKEN }}"
+  ref_value: "${{ github.head_ref }}"
+  object_type: "comment"
+  object_value: "This is a multiline comment|data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAFUlEQVR42mP8z8BQz0AEYBxVSF+FABJADveWkH6oAAAAAElFTkSuQmCC|This is another comment"
 ```
 
 ### Add label to a Linear ticket

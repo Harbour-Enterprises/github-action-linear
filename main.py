@@ -18,6 +18,19 @@ if LINEAR_TOKEN.split("_")[1] == "oauth":
     headers = {"Authorization": f"Bearer {LINEAR_TOKEN}", "Content-Type": "application/json"}
 
 
+def get_file_url(splitted_value):
+    file_data, file_base64 = splitted_value.split(",")
+    file_type = file_data.split(";")[0].split(":")[1]
+    file_bytes = base64.b64decode(file_base64)
+    file_stream = BytesIO(file_bytes)
+    file_stream.seek(0, 2)
+    file_size = file_stream.tell()
+    file_extension = mimetypes.guess_extension(file_type)
+    upload_url, asset_url, headers = get_signed_urls(f"file{file_extension}", file_size, file_type)
+    upload_file(BytesIO(file_bytes), upload_url, headers)
+    return asset_url
+
+
 def get_signed_urls(file_name: str, file_size: int, content_type: str):
     query = """
     mutation FileUpload($size: Int!, $contentType: String!, $filename: String!) {
@@ -277,7 +290,6 @@ def update_issue_state(issue_id: str, state_id: str):
     return None
 
 
-
 def process_linear(ref_value: str, object_type: str, object_value: str):
     """Process Linear API action
 
@@ -311,7 +323,16 @@ def process_linear(ref_value: str, object_type: str, object_value: str):
     team_id = issue.get("team").get("id")
 
     if object_type == "comment":
-        add_comment(issue_id, object_value)
+        # split by pipe | using regex
+        splitted_values = re.split(r"\s*\|\s*", object_value)
+        joined_values = []
+        for splitted_value in splitted_values:
+            # Check if object value is a file
+            if splitted_value.startswith("data"):
+                file_url = get_file_url(splitted_value)
+                splitted_value = f"![alt]({file_url})"
+            joined_values.append(splitted_value)
+        add_comment(issue_id, "\n".join(joined_values))
 
     elif object_type == "state":
         state = get_state(object_value)
@@ -330,20 +351,6 @@ def process_linear(ref_value: str, object_type: str, object_value: str):
 
         # Add label to issue
         add_labels(issue_id, label_ids)
-
-    elif object_type == "file":
-        file_data, file_base64 = object_value.split(",")
-        file_type = file_data.split(";")[0].split(":")[1]
-        file_bytes = base64.b64decode(file_base64)
-        file_stream = BytesIO(file_bytes)
-        file_stream.seek(0, 2)
-        file_size = file_stream.tell()
-        file_extension = mimetypes.guess_extension(file_type)
-        upload_url, asset_url, headers = get_signed_urls(
-            f"file{file_extension}", file_size, file_type
-        )
-        upload_file(BytesIO(file_bytes), upload_url, headers)
-        add_comment(issue_id, f"![alt]({asset_url})")
 
 
 def server_debugger(port: str):
