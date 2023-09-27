@@ -6,10 +6,6 @@ ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED True
 ENV PYTHONWARNINGS ignore
 
-# Set a working directory
-ENV APP_HOME /app
-WORKDIR $APP_HOME
-
 # Copy all requirements (Docker caching)
 COPY requirements* ./
 
@@ -20,4 +16,4 @@ RUN pip3 install --no-cache-dir -r requirements.txt
 COPY . ./
 
 # Run the function
-ENTRYPOINT ["python", "main.py"]
+ENTRYPOINT [ "python", "/main.py" ]
